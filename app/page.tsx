@@ -47,7 +47,7 @@ export type ShellTab =
 export default function Home() {
   const { connection } = useConnection();
   const { publicKey } = useWallet();
-  const { network, setNetwork, rpcUrl, customRpcUrl, setCustomRpcUrl, resetDefaultRpc } = useSolanaNetwork();
+  const { network, setNetwork, rpcUrl, customRpcUrl, setCustomRpcUrl, resetDefaultRpc, pingMs, checkRpcPing } = useSolanaNetwork();
 
   const [activeTab, setActiveTab] = useState<ShellTab>("pulse");
   const [walletBal, setWalletBal] = useState<number | null>(null);
@@ -55,6 +55,8 @@ export default function Home() {
   const [airdropMsg, setAirdropMsg] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [hotWalletKey, setHotWalletKey] = useState<string | null>(null);
+  const [isTestingRpc, setIsTestingRpc] = useState(false);
+  const [rpcTestResult, setRpcTestResult] = useState<string | null>(null);
 
   // Axiom Trading Presets (P1, P2, P3) & Settings Modal
   const [presets, setPresets] = useState<TradingPreset[]>(DEFAULT_TRADING_PRESETS);
@@ -553,6 +555,11 @@ export default function Home() {
 
         {/* Center: Live Platform Telemetry */}
         <div className="hidden lg:flex items-center gap-3 text-[11px] text-[#8a93a6]">
+          <div className="flex items-center gap-1.5 bg-[#0c1017] px-2 py-0.5 rounded border border-[#232a3b]">
+            <span className={`inline-block w-2 h-2 rounded-full ${pingMs ? (pingMs < 120 ? "bg-emerald-400 animate-pulse" : "bg-amber-400") : "bg-gray-500"}`} />
+            <span>RPC Gecikmesi: <strong className={pingMs ? (pingMs < 120 ? "text-emerald-400" : "text-amber-300") : "text-gray-400"}>{pingMs ? `${pingMs}ms` : "Ölçülüyor..."}</strong></span>
+          </div>
+          <span>•</span>
           <span>TPS: <strong className="text-white">2,890</strong></span>
           <span>•</span>
           <span>Gas: <strong className="text-white">15 gwei</strong></span>
@@ -794,39 +801,138 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] text-[#8a93a6] font-bold">Özel RPC URL (Helius, QuickNode vb.)</label>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] text-[#8a93a6] font-bold">Hızlı RPC Sağlayıcı Seçimi</label>
+                    <a
+                      href="https://dashboard.helius.dev/signup"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] text-cyan-400 hover:underline flex items-center gap-1"
+                    >
+                      <span>⚡ Ücretsiz Helius Key Al</span>
+                      <span>↗</span>
+                    </a>
+                  </div>
+
+                  {/* One-click Provider Presets */}
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const template = "https://mainnet.helius-rpc.com/?api-key=";
+                        setCustomRpcInput(template);
+                      }}
+                      className="p-1.5 rounded bg-[#0c1017] border border-[#232a3b] hover:border-cyan-500/50 text-left transition"
+                    >
+                      <div className="text-[11px] font-bold text-white flex items-center gap-1">
+                        <span>⚡</span>
+                        <span>Helius RPC</span>
+                        <span className="text-[9px] text-cyan-400 font-normal ml-auto">Önerilen</span>
+                      </div>
+                      <div className="text-[9px] text-[#8a93a6] truncate">0ms Geyser & MEV Desteği</div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const ankr = "https://rpc.ankr.com/solana";
+                        setCustomRpcInput(ankr);
+                        setCustomRpcUrl(ankr);
+                      }}
+                      className="p-1.5 rounded bg-[#0c1017] border border-[#232a3b] hover:border-cyan-500/50 text-left transition"
+                    >
+                      <div className="text-[11px] font-bold text-white flex items-center gap-1">
+                        <span>🚀</span>
+                        <span>Ankr Fast RPC</span>
+                      </div>
+                      <div className="text-[9px] text-[#8a93a6] truncate">Genel Hızlı Mainnet</div>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1">
+                    <label className="text-[11px] text-[#8a93a6] font-bold">Özel RPC URL</label>
                     {customRpcUrl && (
                       <button
                         type="button"
-                        onClick={resetDefaultRpc}
+                        onClick={() => {
+                          resetDefaultRpc();
+                          setRpcTestResult(null);
+                        }}
                         className="text-[10px] text-rose-400 hover:underline"
                       >
                         Varsayılana Dön
                       </button>
                     )}
                   </div>
+
                   <input
                     type="text"
                     placeholder="https://mainnet.helius-rpc.com/?api-key=..."
                     defaultValue={customRpcUrl}
+                    value={customRpcInput !== "" ? customRpcInput : customRpcUrl}
                     onChange={(e) => setCustomRpcInput(e.target.value)}
-                    className="w-full h-8 rounded bg-[#0c1017] border border-[#232a3b] px-2.5 text-xs text-white placeholder-gray-500"
+                    className="w-full h-8 rounded bg-[#0c1017] border border-[#232a3b] px-2.5 text-xs text-white placeholder-gray-500 font-mono"
                   />
-                  <div className="mt-1.5 flex gap-2">
+
+                  {/* Actions & Ping Tester */}
+                  <div className="flex items-center gap-2 pt-1">
                     <button
                       type="button"
                       onClick={() => {
-                        if (customRpcInput) setCustomRpcUrl(customRpcInput);
+                        const target = customRpcInput || customRpcUrl;
+                        if (target) setCustomRpcUrl(target);
                       }}
-                      className="px-3 py-1 rounded bg-[#3b82f6] text-white text-[11px] font-bold"
+                      className="px-3 py-1 rounded bg-[#3b82f6] hover:bg-[#2563eb] text-white text-[11px] font-bold transition"
                     >
                       RPC Kaydet
                     </button>
-                    <span className="text-[10px] text-gray-400 self-center">
-                      Aktif: {rpcUrl.slice(0, 32)}...
-                    </span>
+
+                    <button
+                      type="button"
+                      disabled={isTestingRpc}
+                      onClick={async () => {
+                        setIsTestingRpc(true);
+                        setRpcTestResult(null);
+                        const target = customRpcInput || customRpcUrl || rpcUrl;
+                        const ping = await checkRpcPing(target);
+                        setIsTestingRpc(false);
+                        if (ping !== null) {
+                          setRpcTestResult(`🟢 ${ping}ms (Mükemmel Tepki)`);
+                        } else {
+                          setRpcTestResult("🔴 Bağlantı Başarısız veya CORS Engeli");
+                        }
+                      }}
+                      className="px-2.5 py-1 rounded bg-[#1f2637] hover:bg-[#2a3449] text-gray-200 text-[11px] font-bold transition flex items-center gap-1"
+                    >
+                      {isTestingRpc ? (
+                        <span>Ölçülüyor...</span>
+                      ) : (
+                        <>
+                          <span>🔌</span>
+                          <span>Ping Testi</span>
+                        </>
+                      )}
+                    </button>
+
+                    {rpcTestResult && (
+                      <span className="text-[10px] font-bold animate-fadeIn">
+                        {rpcTestResult}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="p-2 rounded bg-[#0a0d14] border border-[#1b2230] text-[10px] text-[#8a93a6] flex items-center justify-between">
+                    <div className="truncate mr-2">
+                      <span className="text-gray-400">Aktif Endpoint:</span>{" "}
+                      <span className="text-white font-mono">{rpcUrl.slice(0, 36)}...</span>
+                    </div>
+                    <div className="flex items-center gap-1 whitespace-nowrap">
+                      <span className={`w-1.5 h-1.5 rounded-full ${pingMs ? "bg-emerald-400" : "bg-gray-500"}`} />
+                      <span className={pingMs ? "text-emerald-400 font-bold" : "text-gray-400"}>
+                        {pingMs ? `${pingMs}ms` : "—"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
