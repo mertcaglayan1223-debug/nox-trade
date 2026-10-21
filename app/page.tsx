@@ -36,8 +36,6 @@ export type ShellTab =
   | "pulse"
   | "discover"
   | "trackers"
-  | "perpetuals"
-  | "predictions"
   | "portfolio"
   | "deployer"
   | "multi-wallet"
@@ -245,7 +243,7 @@ export default function Home() {
               }`}
             >
               <span>🚀</span>
-              <span className="hidden xl:inline">Deployer</span>
+              <span>Deployer</span>
             </button>
 
             <button
@@ -258,33 +256,33 @@ export default function Home() {
               }`}
             >
               <span>📊</span>
-              <span className="hidden xl:inline">Volume Bot</span>
+              <span className="hidden xl:inline">Vol Bot</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("multi-wallet")}
-              className={`relative h-11 px-2.5 hidden xl:flex items-center gap-1 shrink-0 transition-colors ${
+              className={`relative h-11 px-2.5 flex items-center gap-1 shrink-0 transition-colors ${
                 activeTab === "multi-wallet"
                   ? "text-[#00d2ff] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#00d2ff]"
                   : "text-[#8a93a6] hover:text-white"
               }`}
             >
               <span>👥</span>
-              <span className="hidden 2xl:inline">Multi-Wallet</span>
+              <span className="hidden xl:inline">Multi-Wallet</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("portfolio")}
-              className={`relative h-11 px-2.5 hidden 2xl:flex items-center gap-1 shrink-0 transition-colors ${
+              className={`relative h-11 px-2.5 flex items-center gap-1 shrink-0 transition-colors ${
                 activeTab === "portfolio"
                   ? "text-[#00d2ff] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#00d2ff]"
                   : "text-[#8a93a6] hover:text-white"
               }`}
             >
               <span>💼</span>
-              <span className="hidden 2xl:inline">Portfolio</span>
+              <span className="hidden xl:inline">Portfolio</span>
             </button>
           </nav>
         </div>
@@ -357,44 +355,6 @@ export default function Home() {
         )}
 
         {activeTab === "trackers" && <J7SocialTracker />}
-
-        {activeTab === "perpetuals" && (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-3xl mb-4 text-[#00d2ff]">
-              📈
-            </div>
-            <h2 className="text-xl font-bold text-white mb-2">Axiom Perpetuals Cockpit</h2>
-            <p className="text-sm text-[#8a93a6] max-w-md mb-4">
-              Solana memecoin ve majör paritelerde 50x kaldıraçlı sürekli vadeli işlem motoru.
-            </p>
-            <button
-              type="button"
-              onClick={() => setActiveTab("pulse")}
-              className="h-8 px-4 rounded-md bg-[#3b82f6] text-white text-xs font-semibold"
-            >
-              Pulse Görünümüne Dön
-            </button>
-          </div>
-        )}
-
-        {activeTab === "predictions" && (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-3xl mb-4 text-purple-400">
-              🎲
-            </div>
-            <h2 className="text-xl font-bold text-white mb-2">Axiom Predictions Market</h2>
-            <p className="text-sm text-[#8a93a6] max-w-md mb-4">
-              Pump.fun tokenlarının Raydium mezuniyeti ve piyasa değeri tahmin piyasaları.
-            </p>
-            <button
-              type="button"
-              onClick={() => setActiveTab("pulse")}
-              className="h-8 px-4 rounded-md bg-[#3b82f6] text-white text-xs font-semibold"
-            >
-              Pulse Görünümüne Dön
-            </button>
-          </div>
-        )}
 
         {activeTab === "portfolio" && (
           <div className="flex-1 overflow-y-auto p-4 bg-[#0a0d14]">
