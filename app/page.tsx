@@ -238,7 +238,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setActiveTab("perpetuals")}
-              className={`relative h-11 px-3 flex items-center gap-1.5 transition-colors ${
+              className={`hidden 2xl:flex relative h-11 px-3 items-center gap-1.5 transition-colors ${
                 activeTab === "perpetuals"
                   ? "text-[#00d2ff] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#00d2ff] after:shadow-[0_0_8px_#00d2ff]"
                   : "text-[#8a93a6] hover:text-white"
@@ -252,7 +252,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setActiveTab("predictions")}
-              className={`relative h-11 px-3 flex items-center gap-1.5 transition-colors ${
+              className={`hidden 2xl:flex relative h-11 px-3 items-center gap-1.5 transition-colors ${
                 activeTab === "predictions"
                   ? "text-[#00d2ff] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#00d2ff] after:shadow-[0_0_8px_#00d2ff]"
                   : "text-[#8a93a6] hover:text-white"
@@ -266,7 +266,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setActiveTab("portfolio")}
-              className={`relative h-11 px-3 flex items-center gap-1.5 transition-colors ${
+              className={`hidden xl:flex relative h-11 px-3 items-center gap-1.5 transition-colors ${
                 activeTab === "portfolio"
                   ? "text-[#00d2ff] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#00d2ff] after:shadow-[0_0_8px_#00d2ff]"
                   : "text-[#8a93a6] hover:text-white"
@@ -295,7 +295,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setActiveTab("multi-wallet")}
-              className={`relative h-11 px-2.5 flex items-center gap-1 transition-colors ${
+              className={`hidden 2xl:flex relative h-11 px-2.5 items-center gap-1 transition-colors ${
                 activeTab === "multi-wallet"
                   ? "text-[#00d2ff] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#00d2ff]"
                   : "text-[#8a93a6] hover:text-white"
@@ -317,15 +317,30 @@ export default function Home() {
               <span>📊</span>
               <span>Volume Bot</span>
             </button>
+
+            {/* Direct Network & Fast RPC Navigation Tab */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowSettingsModal(true);
+                setSettingsActiveTab("network");
+              }}
+              className="relative h-11 px-2.5 flex items-center gap-1.5 text-xs text-cyan-400 hover:text-white font-bold transition-colors"
+              title="Solana Ağı ve Hızlı RPC Ayarları"
+            >
+              <span>🌐</span>
+              <span>Ağ & RPC</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            </button>
           </nav>
         </div>
 
         {/* Right Side: Quick Search, Balance Pills, Faucet, Deposit, Settings Gear, Wallet */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 shrink-0">
           {/* Quick Search Bar with shortcut */}
           <div
             onClick={() => setShowSearchModal(true)}
-            className="hidden xl:flex items-center gap-2 bg-[#131823] border border-[#232a3b] hover:border-[#3b82f6] rounded-md px-2.5 h-7 text-xs text-[#8a93a6] cursor-pointer transition"
+            className="hidden 2xl:flex items-center gap-2 bg-[#131823] border border-[#232a3b] hover:border-[#3b82f6] rounded-md px-2.5 h-7 text-xs text-[#8a93a6] cursor-pointer transition"
           >
             <span>🔍</span>
             <span className="text-[#8a93a6] w-32 truncate">Search pairs, CA…</span>
@@ -335,7 +350,7 @@ export default function Home() {
           </div>
 
           {/* SOL & USDC Balance Pills */}
-          <div className="hidden sm:flex items-center gap-1 bg-[#131823] border border-[#232a3b] px-2 py-1 rounded-md text-xs font-mono">
+          <div className="hidden 2xl:flex items-center gap-1 bg-[#131823] border border-[#232a3b] px-2 py-1 rounded-md text-xs font-mono">
             <span className="text-[#8a93a6]">SOL:</span>
             <span className="text-white font-bold">
               {walletBal !== null ? walletBal.toFixed(2) : "0.00"}
@@ -347,19 +362,23 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Solana Cluster Switcher (Mainnet vs Devnet) */}
+          {/* Solana Cluster Switcher & Quick RPC Button */}
           <button
             type="button"
-            onClick={() => setNetwork(network === "mainnet-beta" ? "devnet" : "mainnet-beta")}
-            className={`h-7 px-2.5 rounded-md border text-xs font-mono font-bold flex items-center gap-1.5 transition ${
+            onClick={() => {
+              setShowSettingsModal(true);
+              setSettingsActiveTab("network");
+            }}
+            className={`h-7 px-2.5 rounded-md border text-xs font-mono font-bold flex items-center gap-1.5 transition shrink-0 ${
               network === "mainnet-beta"
-                ? "border-emerald-500/40 bg-emerald-500/10 text-[#00ff88]"
-                : "border-amber-500/40 bg-amber-500/10 text-amber-300"
+                ? "border-emerald-500/40 bg-emerald-500/10 text-[#00ff88] hover:bg-emerald-500/20"
+                : "border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
             }`}
-            title="Tıkla ve Ağı Değiştir (Mainnet / Devnet)"
+            title="Tıkla: Ağ ve Hızlı RPC Yapılandırmasını Aç"
           >
             <span className={`w-2 h-2 rounded-full ${network === "mainnet-beta" ? "bg-emerald-400 animate-pulse" : "bg-amber-400"}`} />
             <span>{network === "mainnet-beta" ? "MAINNET" : "DEVNET"}</span>
+            <span className="text-[10px] text-cyan-400 font-normal">⚡ RPC</span>
           </button>
 
           {/* Quick +1 SOL Faucet (Devnet only) */}
@@ -368,7 +387,7 @@ export default function Home() {
               type="button"
               onClick={handleQuickAirdrop}
               disabled={airdropBusy}
-              className="flex items-center gap-1 h-7 px-2.5 rounded-md border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-[#00d2ff] font-mono font-bold text-xs transition disabled:opacity-40"
+              className="flex items-center gap-1 h-7 px-2 rounded-md border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-[#00d2ff] font-mono font-bold text-xs transition disabled:opacity-40 shrink-0"
               title="Devnet test bakiyesi talep et"
             >
               <span>◈</span>
@@ -376,27 +395,24 @@ export default function Home() {
             </button>
           )}
 
-          {/* Axiom Deposit Button */}
+          {/* Settings Button with Clear Label */}
           <button
             type="button"
-            onClick={() => setShowDepositModal(true)}
-            className="h-7 px-3 rounded-md bg-[#3b82f6] hover:bg-[#2563eb] text-white font-semibold text-xs transition shadow-sm flex items-center gap-1"
+            onClick={() => {
+              setShowSettingsModal(true);
+              setSettingsActiveTab("presets");
+            }}
+            className="h-7 px-2.5 rounded-md bg-[#131823] border border-[#232a3b] hover:border-[#3b82f6] text-white hover:text-cyan-400 flex items-center gap-1.5 transition text-xs font-semibold shrink-0"
+            title="NOX Terminal & Sniper Ayarları"
           >
-            <span>Deposit</span>
+            <span className="text-cyan-400">⚙️</span>
+            <span className="text-[11px] hidden sm:inline">Ayarlar</span>
           </button>
 
-          {/* Settings Gear Icon (Opens Trading & Preset Settings Modal) */}
-          <button
-            type="button"
-            onClick={() => setShowSettingsModal(true)}
-            className="h-7 w-7 rounded-md bg-[#131823] border border-[#232a3b] hover:border-[#3b82f6] text-[#8a93a6] hover:text-white flex items-center justify-center transition"
-            title="Trading Ayarları & Preset Yapılandırması"
-          >
-            <span>⚙</span>
-          </button>
-
-          {/* Wallet Multi Button */}
-          <WalletMultiButton />
+          {/* Wallet Multi Button in protected shrink-0 container */}
+          <div className="shrink-0 flex items-center">
+            <WalletMultiButton />
+          </div>
         </div>
       </header>
 
@@ -555,9 +571,17 @@ export default function Home() {
 
         {/* Center: Live Platform Telemetry */}
         <div className="hidden lg:flex items-center gap-3 text-[11px] text-[#8a93a6]">
-          <div className="flex items-center gap-1.5 bg-[#0c1017] px-2 py-0.5 rounded border border-[#232a3b]">
+          <div
+            onClick={() => {
+              setShowSettingsModal(true);
+              setSettingsActiveTab("network");
+            }}
+            className="flex items-center gap-1.5 bg-[#0c1017] hover:bg-[#151c28] px-2.5 py-0.5 rounded border border-[#232a3b] hover:border-cyan-500/50 cursor-pointer transition"
+            title="Ağ & Hızlı RPC Ayarlarını Açmak İçin Tıklayın"
+          >
             <span className={`inline-block w-2 h-2 rounded-full ${pingMs ? (pingMs < 120 ? "bg-emerald-400 animate-pulse" : "bg-amber-400") : "bg-gray-500"}`} />
             <span>RPC Gecikmesi: <strong className={pingMs ? (pingMs < 120 ? "text-emerald-400" : "text-amber-300") : "text-gray-400"}>{pingMs ? `${pingMs}ms` : "Ölçülüyor..."}</strong></span>
+            <span className="text-[9px] text-cyan-400 font-bold ml-1 px-1 bg-cyan-500/10 rounded">AĞ & RPC ⚙</span>
           </div>
           <span>•</span>
           <span>TPS: <strong className="text-white">2,890</strong></span>
