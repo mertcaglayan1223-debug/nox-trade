@@ -51,8 +51,9 @@ body {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: auto !important;
-  max-width: 150px !important;
+  max-width: 140px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .wallet-adapter-dropdown {
